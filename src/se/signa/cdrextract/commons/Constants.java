@@ -12,6 +12,8 @@ public interface Constants {
 	String PROP_OUTPUT_DIR = "output.directory";
 	String PROP_CDRTABLE_NAME = "cdr.tablename";
 	String PROP_OUTPUT_SHEET_SIZE = "output.page.size";
+	String PROP_MAX_DATEDIFF_ALLOWED = "max.date.diff.allowed";
+	//String PROP_MULTI_VALUE_INPUT_DELIMETER = "multi.value.delim";
 	
 	String MULTI_VALUE_INPUT_DELIMETER = ",";
 	

@@ -14,12 +14,30 @@ public class RequestDetail {
     private String bndName = null;
     private List<String> aNumbers = null;
     private List<String> bNumbers = null;
-    private Date fromDateTime = null;
-    private Date toDateTime = null;
+    private Date fromDate = null;
+    private Date toDate = null;
     private String causeCode = null;
     private String billProfile = null;
+    private String aNumbersString = null;
+    private String bNumbersString = null;
 
-    public String getAccName() {
+    public String getANumbersString() {
+		return aNumbersString;
+	}
+
+	public void setANumbersString(String numbersString) {
+		aNumbersString = numbersString;
+	}
+
+	public String getBNumbersString() {
+		return bNumbersString;
+	}
+
+	public void setBNumbersString(String numbersString) {
+		bNumbersString = numbersString;
+	}
+
+	public String getAccName() {
         return accName;
     }
 
@@ -51,20 +69,20 @@ public class RequestDetail {
         this.aNumbers = aNumbers;
     }
 
-    public Date getFromDateTime() {
-        return fromDateTime;
+    public Date getFromDate() {
+        return fromDate;
     }
 
-    public void setFromDateTime(Date fromDateTime) {
-        this.fromDateTime = fromDateTime;
+    public void setFromDate(Date fromDateTime) {
+        this.fromDate = fromDateTime;
     }
 
-    public Date getToDateTime() {
-        return toDateTime;
+    public Date getToDate() {
+        return toDate;
     }
 
-    public void setToDateTime(Date toDateTime) {
-        this.toDateTime = toDateTime;
+    public void setToDate(Date toDateTime) {
+        this.toDate = toDateTime;
     }
 
     public String getCauseCode() {
@@ -87,8 +105,8 @@ public class RequestDetail {
     			this.bndName != null && !this.bndName.isEmpty() ||
     			this.aNumbers != null && !this.aNumbers.isEmpty() ||
     			this.bNumbers != null && !this.bNumbers.isEmpty() ||
-    			this.fromDateTime != null ||
-    			this.toDateTime != null ||
+    			//this.fromDate != null ||
+    			//this.toDate != null ||
     			this.billProfile != null && !this.billProfile.isEmpty() ||
     			this.causeCode != null && !this.causeCode.isEmpty()){
     		return false;
@@ -98,7 +116,7 @@ public class RequestDetail {
 
     @Override
     public String toString() {
-        return "RequestDetail{" + "accName=" + accName + ", bndName=" + bndName + ", aNumbers=" + aNumbers + ", bNumbers=" + bNumbers + ", fromDateTime=" + fromDateTime + ", toDateTime=" + toDateTime + ", causeCode=" + causeCode + ", billProfile=" + billProfile + '}';
+        return "RequestDetail{" + "accName=" + accName + ", bndName=" + bndName + ", aNumbers=" + aNumbers + ", bNumbers=" + bNumbers + ", fromDateTime=" + fromDate + ", toDateTime=" + toDate + ", causeCode=" + causeCode + ", billProfile=" + billProfile + '}';
     }
 
 }

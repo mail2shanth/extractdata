@@ -5,8 +5,16 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
@@ -45,26 +53,69 @@ public class RequestHandler {
 		logger.info("loading tool properties.");
 		loadProps();
 		Response response = new Response();
+		
+		int diffInDays = (int)( (reqDetail.getToDate().getTime() - 
+				reqDetail.getFromDate().getTime()) / (1000 * 60 * 60 * 24) ) + 1;
+		
+		String maxDatesdiffInDays = ApplicationProperties.getInstance().getPropertyValue(Constants.PROP_MAX_DATEDIFF_ALLOWED);
+		int maxDatesdiffInDaysValue = 7;
+		try{
+			maxDatesdiffInDaysValue = Integer.parseInt(maxDatesdiffInDays);
+		}catch(Exception e){
+			
+		}
+		if(diffInDays > maxDatesdiffInDaysValue){
+			response.setStatus(-2);
+			return response;
+		}
+		
+		
+		Date fromDt = reqDetail.getFromDate();
+		Date toDt = reqDetail.getToDate();
+		List<Date> dates = new ArrayList<Date>();
+	    Calendar calendar = new GregorianCalendar();
+	    calendar.setTime(fromDt);
+	    while (calendar.getTime().before(toDt)){
+	        Date result = calendar.getTime();
+	        dates.add(result);
+	        calendar.add(Calendar.DATE, 1);
+	    }
+		
 		ResultSet results = null;
 		long startTime = System.currentTimeMillis();
+		DBHelper dh = new DBHelper();
+		Connection connecton = null;
+		List<String> opFiles = new ArrayList<String>();
 		try{
-			logger.info("getting DBConnection.");
-			DBHelper dh = new DBHelper();
-			logger.info("Fetching results.");
-			results = dh.fetchResults(reqDetail);
-			logger.info("Writing to xls file.");
-			String outputFile = writeCDRs(results);
+			connecton = dh.getDbConnection();
+			for(Date date : dates){
+				DateFormat df = new SimpleDateFormat("ddMMyy");
+				String dateSuffix = df.format(date);
+				logger.info("Fetching results for " + dateSuffix);
+				results = dh.fetchResults(reqDetail, connecton, dateSuffix);
+				logger.info("Writing to file for " + dateSuffix);
+				String outputFile = writeCDRs(results, dateSuffix);
+				logger.info("Saved results for " + dateSuffix);
+				opFiles.add(outputFile);
+			}
 			logger.info("Request completed in " + (System.currentTimeMillis() - startTime) + "mSecs.");
 			response.setStatus(1);
-			response.setOutputFile(outputFile);
+			response.setOutputFiles(opFiles);
 		}catch(Exception e){
 			logger.error(e);
 			response.setStatus(-1);
+		}finally{
+			if(connecton != null){
+				try{
+					connecton.close();
+				}catch(Exception e){
+				}
+			}
 		}
 		return response;
 	}
 
-	private String writeCDRs(ResultSet result) throws Exception{
+	private String writeCDRs(ResultSet result, String dateSuffix) throws Exception{
 		if(result == null){
 			logger.error("Not a valid resultSet...!");
 			return null;
@@ -98,7 +149,7 @@ public class RequestHandler {
 				rowIndex++;
 			}
 			if(rowIndex > 0 || sheetNumber > 1){
-				opFile = wtr.saveWorkbook();
+				opFile = wtr.saveWorkbook(dateSuffix);
 			}
 		} catch (Exception e) {
 			logger.error(e);

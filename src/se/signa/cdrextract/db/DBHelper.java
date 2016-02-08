@@ -6,12 +6,13 @@
 package se.signa.cdrextract.db;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.List;
+
+import org.apache.log4j.Logger;
 
 import se.signa.cdrextract.commons.ApplicationProperties;
 import se.signa.cdrextract.commons.CDRFieldUtils;
@@ -24,6 +25,7 @@ import se.signa.cdrextract.commons.RequestDetail;
  */
 public class DBHelper {
 
+	final static Logger logger = Logger.getLogger(DBHelper.class);
 	public Connection getDbConnection() throws Exception{
 		Class.forName("oracle.jdbc.driver.OracleDriver");  
 		Connection con=DriverManager.
@@ -33,56 +35,59 @@ public class DBHelper {
 		return con;
 	}
 
-	public ResultSet fetchResults(RequestDetail reqDetail) throws Exception{
-		Connection dbConn = null;
+	public ResultSet fetchResults(RequestDetail reqDetail, Connection dbConn, String dateSuffix ) throws Exception{
 		Statement stmt=null;
-		String query =	getQuery(reqDetail);
+		String query =	getQuery(reqDetail, dateSuffix);
+		logger.debug("executing query : " + query);
 		ResultSet rs = null;
-		dbConn  = getDbConnection();
 		stmt = dbConn.createStatement();
 		rs = stmt.executeQuery(query);
 		return rs;
 	}
 	
-	private String getQuery(RequestDetail reqDetail){
+	private String getQuery(RequestDetail reqDetail, String dateSuffix){
 		String tableName = ApplicationProperties.getInstance().getPropertyValue(Constants.PROP_CDRTABLE_NAME);
-		StringBuilder query = new StringBuilder("select * from " + tableName) ;
+		StringBuilder query = new StringBuilder("select * from " + tableName + "_" + dateSuffix) ;
 		List<String> conditions = new LinkedList<String>();
 		if(!reqDetail.isEmptyRequest()){
 			query.append(" WHERE ");
 		}
-		if(reqDetail.getFromDateTime() != null){
-			String condition = "to_char(" + Constants.CDR_TABLE_COLUMN_EVT_DTTM + ",'YYYY-MM-DD')" + 
-			" >= '" +  new Date(reqDetail.getFromDateTime().getTime()) + "'";
-			conditions.add(condition);
-		}
-		if(reqDetail.getToDateTime() != null){
-			String condition = "to_char(" + Constants.CDR_TABLE_COLUMN_EVT_DTTM + ",'YYYY-MM-DD')" + 
-			" <= '" + new Date(reqDetail.getToDateTime().getTime()) +"'";
-			conditions.add(condition);
-		}
+		
+		// TODO use LIKE clause for all these filters
 		if(reqDetail.getAccName() != null && !reqDetail.getAccName().isEmpty()){
-			String condition = Constants.CDR_TABLE_COLUMN_ACC_NAME + " = " + warpInQuotes(reqDetail.getAccName()); 
+			List<String> accNames = CDRFieldUtils.getListFromString(reqDetail.getAccName());
+			String inClauseAccNames = CDRFieldUtils.getListAsString(accNames);
+			String condition = Constants.CDR_TABLE_COLUMN_ACC_NAME + " IN ( " + inClauseAccNames + " ) "; 
 			conditions.add(condition);
 		}
 		if(reqDetail.getBndName() != null && !reqDetail.getBndName().isEmpty()){
-			String condition = Constants.CDR_TABLE_COLUMN_BND_NAME + " = " + warpInQuotes(reqDetail.getBndName());
+			List<String> bndNames = CDRFieldUtils.getListFromString(reqDetail.getBndName());
+			String inClauseBndNames = CDRFieldUtils.getListAsString(bndNames);
+			String condition = Constants.CDR_TABLE_COLUMN_BND_NAME + " IN ( " + inClauseBndNames + " ) "; 
 			conditions.add(condition);
 		}
-		if(reqDetail.getaNumbers() != null && !reqDetail.getaNumbers().isEmpty()){
-			String condition = Constants.CDR_TABLE_COLUMN_ANUMBER + " IN ( " + CDRFieldUtils.getListAsString(reqDetail.getaNumbers()) + " )";
+		if(reqDetail.getANumbersString() != null && !reqDetail.getANumbersString().isEmpty()){
+			List<String> aNumbers = CDRFieldUtils.getListFromString(reqDetail.getANumbersString());
+			String inClauseANumbers = CDRFieldUtils.getListAsString(aNumbers);
+			String condition = Constants.CDR_TABLE_COLUMN_ANUMBER + " IN ( " + inClauseANumbers + " ) "; 
 			conditions.add(condition);
 		}
-		if(reqDetail.getbNumbers() != null && !reqDetail.getbNumbers().isEmpty()){
-			String condition = Constants.CDR_TABLE_COLUMN_BNUMBER + " IN ( " +  CDRFieldUtils.getListAsString(reqDetail.getbNumbers()) + " )";
+		if(reqDetail.getBNumbersString() != null && !reqDetail.getBNumbersString().isEmpty()){
+			List<String> bNumbers = CDRFieldUtils.getListFromString(reqDetail.getBNumbersString());
+			String inClauseBNumbers = CDRFieldUtils.getListAsString(bNumbers);
+			String condition = Constants.CDR_TABLE_COLUMN_BNUMBER + " IN ( " + inClauseBNumbers + " ) "; 
 			conditions.add(condition);
 		}
 		if(reqDetail.getBillProfile() != null && !reqDetail.getBillProfile().isEmpty()){
-			String condition = Constants.CDR_TABLE_COLUMN_BILL_PROFILE + " = " + warpInQuotes(reqDetail.getBillProfile());
+			List<String> billProfles = CDRFieldUtils.getListFromString(reqDetail.getBillProfile());
+			String inClauseBillProfles = CDRFieldUtils.getListAsString(billProfles);
+			String condition = Constants.CDR_TABLE_COLUMN_BILL_PROFILE + " IN ( " + inClauseBillProfles + " ) "; 
 			conditions.add(condition);
 		}
 		if(reqDetail.getCauseCode() != null && !reqDetail.getCauseCode().isEmpty()){
-			String condition = Constants.CDR_TABLE_COLUMN_CAUSE_CODE + " = " + warpInQuotes(reqDetail.getCauseCode());
+			List<String> causeCodes = CDRFieldUtils.getListFromString(reqDetail.getCauseCode());
+			String inClauseCauseCodes = CDRFieldUtils.getListAsString(causeCodes);
+			String condition = Constants.CDR_TABLE_COLUMN_CAUSE_CODE + " IN ( " + inClauseCauseCodes + " ) "; 
 			conditions.add(condition);
 		}
 		if(!conditions.isEmpty()){
@@ -97,13 +102,5 @@ public class DBHelper {
 			}
 		}
 		return query.toString();
-	}
-	
-	private String warpInQuotes(String str){
-		StringBuilder sb = new StringBuilder();
-		sb.append("'");
-		sb.append(str);
-		sb.append("'");
-		return sb.toString();
 	}
 }

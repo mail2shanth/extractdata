@@ -44,9 +44,9 @@ public class ExcelWriter {
 		row.createCell(cellIndex++).setCellValue(cdr.getBNumber());
 	}
 
-	public String saveWorkbook() throws Exception{
+	public String saveWorkbook(String dateSuffix) throws Exception{
 		FileOutputStream fos = null;
-		String outputFileName = outputFilePath + UUID.randomUUID().toString() + ".xls";
+		String outputFileName = outputFilePath + dateSuffix + "-" + UUID.randomUUID().toString() + ".xls";
 		try {
 			fos = new FileOutputStream(outputFileName);
 			workbook.write(fos);

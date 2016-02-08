@@ -13,8 +13,9 @@ public class CDRFieldUtils {
         List<String> strList = null;
         if(str != null && !str.isEmpty()){
             strList = new ArrayList<String>();
-            for(String token : str.split(Constants.MULTI_VALUE_INPUT_DELIMETER)){
-                strList.add(token);
+            for(String token : str.split("\\$\\$")){
+                if(!token.trim().isEmpty())
+                	strList.add(token.trim());
             }
         }
         return strList;
@@ -22,9 +23,9 @@ public class CDRFieldUtils {
     
     public static String getListAsString(List<String> list){
     	if(list != null && !list.isEmpty()){
-    		if(list.size() == 1){
+    		/*if(list.size() == 1){
     			return list.get(0);
-    		}else{
+    		}else{*/
     			StringBuilder sb = new StringBuilder();
     			int index = 0;
     			int size = list.size();
@@ -33,12 +34,12 @@ public class CDRFieldUtils {
     				sb.append(bNum);
     				sb.append("'");
     				if(index< size-1){
-    					sb.append(Constants.MULTI_VALUE_INPUT_DELIMETER);
+    					sb.append(",");
     				}
     				index++;
     			}
     			return sb.toString();
-    		}
+    	//	}
     	}else{
     		return null;
     	}

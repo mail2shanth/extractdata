@@ -1,6 +1,8 @@
 
 package se.signa.cdrextract.commons;
 
+import java.util.List;
+
 /**
  *
  * @author VGajja
@@ -8,7 +10,7 @@ package se.signa.cdrextract.commons;
 public class Response {
     
     int status;
-    String outputFile = null;
+    List<String> outputFiles = null;
     long totalRecords = 0;
     long timeConsumed = 0;
 
@@ -22,12 +24,12 @@ public class Response {
 
     
     
-    public String getOutputFile() {
-        return outputFile;
+    public List<String> getOutputFiles() {
+        return outputFiles;
     }
 
-    public void setOutputFile(String outputFile) {
-        this.outputFile = outputFile;
+    public void setOutputFiles(List<String> outputFiles) {
+        this.outputFiles = outputFiles;
     }
 
     public long getTotalRecords() {
@@ -48,7 +50,7 @@ public class Response {
 
     @Override
     public String toString() {
-        return "Response{" + "status=" + status + ", outputFile=" + outputFile + ", totalRecords=" + totalRecords + ", timeConsumed=" + timeConsumed + '}';
+        return "Response{" + "status=" + status + ", outputFile=" + outputFiles + ", totalRecords=" + totalRecords + ", timeConsumed=" + timeConsumed + '}';
     }
 
     

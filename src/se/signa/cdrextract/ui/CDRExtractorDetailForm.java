@@ -43,7 +43,6 @@ public class CDRExtractorDetailForm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-      //  jDatePickerUtil1 = new net.sourceforge.jdatepicker.util.JDatePickerUtil();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -282,57 +281,44 @@ public class CDRExtractorDetailForm extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         
-        String accName = null;
-        String bndName = null;
-        List<String> aNumbers = null;
-        List<String> bNumbers = null;
         Calendar fromDate = dateChooserCombo1.getSelectedDate();
         Calendar toDate = dateChooserCombo2.getSelectedDate();
-        String causeCode = null;
-        String billProfile = null; 
+        RequestDetail reqDetail = new RequestDetail();
         if(!FormValidator.isValidFromAndToDates(fromDate, toDate)){
             JOptionPane.showMessageDialog(jPanel2, "Invalid 'From' amd 'To' Dates", null, 2, null);
             logger.error("Invalid 'From' amd 'To' Dates");
             return;
         }else{
-           int diffInDays = (int)( (toDate.getTime().getTime() - fromDate.getTime().getTime()) / (1000 * 60 * 60 * 24) );
-           if(diffInDays > 7){
-            JOptionPane.showMessageDialog(jPanel2, "Date range is beyond limits.", null, 2, null);
-            logger.error( "Date range is beyond limits. Max limit is 7 days.");
-            return ;
-           }
-            
-            if(jTextField1.getText() != null && !jTextField1.getText().isEmpty())
-                accName = jTextField1.getText().trim();
-            
-            if(jTextField2.getText() != null && !jTextField2.getText().isEmpty())
-                bndName = jTextField2.getText().trim();
-            
-            String aNumberValue = jTextField3.getText();
-            if(aNumberValue != null && !aNumberValue.isEmpty()){
-                aNumbers = CDRFieldUtils.getListFromString(aNumberValue.trim());
-            }
-            String bNumberValue = jTextField4.getText();
-            if(bNumberValue != null && !bNumberValue.isEmpty()){
-                bNumbers = CDRFieldUtils.getListFromString(bNumberValue.trim());
-            }
-            
-            if(jTextField7.getText() != null && !jTextField7.getText().isEmpty())
-                causeCode = jTextField7.getText().trim();
-            
-            if(jTextField5.getText() != null && !jTextField5.getText().isEmpty())
-                billProfile = jTextField7.getText().trim();
+        	if(jTextField1.getText() != null && !jTextField1.getText().isEmpty())
+        		//accName = jTextField1.getText().trim();
+        		reqDetail.setAccName(jTextField1.getText().trim());
+
+        	if(jTextField2.getText() != null && !jTextField2.getText().isEmpty())
+        		//bndName = jTextField2.getText().trim();
+        		reqDetail.setBndName(jTextField2.getText().trim());
+
+        	String aNumberValue = jTextField3.getText();
+        	if(aNumberValue != null && !aNumberValue.isEmpty()){
+        		// aNumbers = CDRFieldUtils.getListFromString();
+        		reqDetail.setANumbersString(aNumberValue.trim());
+        	}
+        	String bNumberValue = jTextField4.getText();
+        	if(bNumberValue != null && !bNumberValue.isEmpty()){
+        		// bNumbers = CDRFieldUtils.getListFromString(bNumberValue.trim());
+        		reqDetail.setBNumbersString(bNumberValue.trim());
+        	}
+
+        	if(jTextField7.getText() != null && !jTextField7.getText().isEmpty())
+        		// causeCode = jTextField7.getText().trim();
+        		reqDetail.setCauseCode(jTextField7.getText().trim());
+
+        	if(jTextField5.getText() != null && !jTextField5.getText().isEmpty())
+        		//billProfile = jTextField7.getText().trim();
+        		reqDetail.setBillProfile(jTextField5.getText().trim());
         }
         
-        RequestDetail reqDetail = new RequestDetail();
-        reqDetail.setAccName(accName);
-        reqDetail.setBndName(bndName);
-        reqDetail.setaNumbers(aNumbers);
-        reqDetail.setbNumbers(bNumbers);
-        reqDetail.setCauseCode(causeCode);
-        reqDetail.setBillProfile(billProfile);
-        reqDetail.setFromDateTime(fromDate.getTime());
-        reqDetail.setToDateTime(toDate.getTime());
+        reqDetail.setFromDate(fromDate.getTime());
+        reqDetail.setToDate(toDate.getTime());
         
         jButton1.setEnabled(false);
         jButton3.setEnabled(false);
@@ -346,6 +332,7 @@ public class CDRExtractorDetailForm extends javax.swing.JFrame {
         try{
         	RequestHandler rh = new RequestHandler();
         	response = rh.processRequest(reqDetail);
+        	
         }catch(Error e){
         	logger.error(e);
         }
@@ -354,12 +341,19 @@ public class CDRExtractorDetailForm extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(jPanel2, "Failed to process request, check logs for more details.", null, 2, null);
             jTextArea1.append("Failed to process request, check logs for more details.\n");
            
+        }else if ( response.getStatus() == -2){
+        	JOptionPane.showMessageDialog(jPanel2, "Date range is beyond limits.", null, 2, null);
+            logger.error( "Date range is beyond limits.");
+            jTextArea1.append("Failed to process request, check logs for more details.\n");
         }else{
             JOptionPane.showMessageDialog(jPanel2, "Successfully processed request, check output directory for file(s).", null, 2, null);
             jTextArea1.append("Successfully processed request, check output directory for file(s).  \n");
             jTextArea1.append("Process endTime : " + Calendar.getInstance().getTimeInMillis() + "\n");
             jTextArea1.append("OutputFile(s): \n");
-            jTextArea1.append(response.getOutputFile());
+            for(String fName : response.getOutputFiles()){
+            	 jTextArea1.append(fName);
+            	 jTextArea1.append("\n");
+            }
             clearFields();
         }
         jButton1.setEnabled(true);
@@ -375,8 +369,8 @@ public class CDRExtractorDetailForm extends javax.swing.JFrame {
         jTextField4.setText(null);
         jTextField5.setText(null);
         jTextField7.setText(null);
-        dateChooserCombo1.setCurrent(null);
-        dateChooserCombo2.setCurrent(null);
+       // dateChooserCombo1.setCurrent(null);
+       // dateChooserCombo2.setCurrent(null);
        
     }
     
@@ -411,6 +405,7 @@ public class CDRExtractorDetailForm extends javax.swing.JFrame {
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
+    	
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -460,7 +455,6 @@ public class CDRExtractorDetailForm extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
- //   private net.sourceforge.jdatepicker.util.JDatePickerUtil jDatePickerUtil1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
