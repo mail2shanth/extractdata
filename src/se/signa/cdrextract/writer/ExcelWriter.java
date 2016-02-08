@@ -1,7 +1,6 @@
 package se.signa.cdrextract.writer;
 
 import java.io.FileOutputStream;
-import java.util.UUID;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -44,9 +43,15 @@ public class ExcelWriter {
 		row.createCell(cellIndex++).setCellValue(cdr.getBNumber());
 	}
 
-	public String saveWorkbook(String dateSuffix) throws Exception{
+	public String saveWorkbook(String dateSuffix, String reqName) throws Exception{
 		FileOutputStream fos = null;
-		String outputFileName = outputFilePath + dateSuffix + "-" + UUID.randomUUID().toString() + ".xls";
+		String outputFileName = null;
+		if(reqName != null && !reqName.isEmpty()){
+			String normalizeRreqName = reqName.replace(" ", "_");
+			outputFileName = outputFilePath +  normalizeRreqName + "-" + dateSuffix + "-" + System.currentTimeMillis() + ".xls";
+		}
+		else
+			outputFileName = outputFilePath + dateSuffix + "-" + System.currentTimeMillis() + ".xls";
 		try {
 			fos = new FileOutputStream(outputFileName);
 			workbook.write(fos);

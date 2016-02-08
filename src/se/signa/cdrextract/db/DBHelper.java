@@ -27,6 +27,7 @@ public class DBHelper {
 
 	final static Logger logger = Logger.getLogger(DBHelper.class);
 	public Connection getDbConnection() throws Exception{
+		// TODO use MSSQL server
 		Class.forName("oracle.jdbc.driver.OracleDriver");  
 		Connection con=DriverManager.
 		getConnection( "jdbc:oracle:thin:@" + ApplicationProperties.getInstance().getPropertyValue(Constants.PROP_DB_CONNECTION_URL),

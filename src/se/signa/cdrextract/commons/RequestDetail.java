@@ -20,8 +20,17 @@ public class RequestDetail {
     private String billProfile = null;
     private String aNumbersString = null;
     private String bNumbersString = null;
+    private String requestName = null;
 
-    public String getANumbersString() {
+    public String getRequestName() {
+		return requestName;
+	}
+
+	public void setRequestName(String requestName) {
+		this.requestName = requestName;
+	}
+
+	public String getANumbersString() {
 		return aNumbersString;
 	}
 

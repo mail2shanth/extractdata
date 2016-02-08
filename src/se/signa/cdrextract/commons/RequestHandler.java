@@ -94,7 +94,7 @@ public class RequestHandler {
 				logger.info("Fetching results for " + dateSuffix);
 				results = dh.fetchResults(reqDetail, connecton, dateSuffix);
 				logger.info("Writing to file for " + dateSuffix);
-				String outputFile = writeCDRs(results, dateSuffix);
+				String outputFile = writeCDRs(results, dateSuffix, reqDetail.getRequestName());
 				logger.info("Saved results for " + dateSuffix);
 				opFiles.add(outputFile);
 			}
@@ -115,7 +115,7 @@ public class RequestHandler {
 		return response;
 	}
 
-	private String writeCDRs(ResultSet result, String dateSuffix) throws Exception{
+	private String writeCDRs(ResultSet result, String dateSuffix, String reqName) throws Exception{
 		if(result == null){
 			logger.error("Not a valid resultSet...!");
 			return null;
@@ -149,7 +149,7 @@ public class RequestHandler {
 				rowIndex++;
 			}
 			if(rowIndex > 0 || sheetNumber > 1){
-				opFile = wtr.saveWorkbook(dateSuffix);
+				opFile = wtr.saveWorkbook(dateSuffix, reqName);
 			}
 		} catch (Exception e) {
 			logger.error(e);
