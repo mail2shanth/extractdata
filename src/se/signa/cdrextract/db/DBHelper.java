@@ -27,12 +27,24 @@ public class DBHelper {
 
 	final static Logger logger = Logger.getLogger(DBHelper.class);
 	public Connection getDbConnection() throws Exception{
-		// TODO use MSSQL server
-		Class.forName("oracle.jdbc.driver.OracleDriver");  
+		/*Class.forName("oracle.jdbc.driver.OracleDriver");  
 		Connection con=DriverManager.
 		getConnection( "jdbc:oracle:thin:@" + ApplicationProperties.getInstance().getPropertyValue(Constants.PROP_DB_CONNECTION_URL),
 				ApplicationProperties.getInstance().getPropertyValue(Constants.PROP_DB_NAME),
-				ApplicationProperties.getInstance().getPropertyValue(Constants.PROP_DB_PASSWORD));
+				ApplicationProperties.getInstance().getPropertyValue(Constants.PROP_DB_PASSWORD));*/
+		
+		Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+		StringBuilder connString = new StringBuilder();
+		connString.append("jdbc:sqlserver://");
+		connString.append(ApplicationProperties.getInstance().getPropertyValue(Constants.PROP_DB_CONNECTION_URL));
+		connString.append(";user=");
+		connString.append(ApplicationProperties.getInstance().getPropertyValue(Constants.PROP_DB_USR_NAME));
+		connString.append(";password=");
+		connString.append(ApplicationProperties.getInstance().getPropertyValue(Constants.PROP_DB_PASSWORD));
+		connString.append(";database=");
+		connString.append(ApplicationProperties.getInstance().getPropertyValue(Constants.PROP_DB_NAME));
+		Connection con = DriverManager.getConnection(connString.toString());
+		
 		return con;
 	}
 

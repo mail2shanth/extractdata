@@ -7,6 +7,8 @@ package se.signa.cdrextract.commons;
 public interface Constants {
 	
 	String PROP_DB_NAME = "db.name";
+	String PROP_DB_USR_NAME = "db.user.name";
+	
 	String PROP_DB_PASSWORD = "db.password";
 	String PROP_DB_CONNECTION_URL = "db.connection.url";
 	String PROP_OUTPUT_DIR = "output.directory";
