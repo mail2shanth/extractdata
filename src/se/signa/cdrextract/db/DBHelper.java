@@ -54,42 +54,47 @@ public class DBHelper {
 			query.append(" WHERE ");
 		}
 		
-		// TODO use LIKE clause for all these filters
 		if(reqDetail.getAccName() != null && !reqDetail.getAccName().isEmpty()){
 			List<String> accNames = CDRFieldUtils.getListFromString(reqDetail.getAccName());
-			String inClauseAccNames = CDRFieldUtils.getListAsString(accNames);
-			String condition = Constants.CDR_TABLE_COLUMN_ACC_NAME + " IN ( " + inClauseAccNames + " ) "; 
-			conditions.add(condition);
+			//String inClauseAccNames = CDRFieldUtils.getListAsString(accNames);
+			String inClauseAccNames = CDRFieldUtils.getLikeClauseCondition(accNames, Constants.CDR_TABLE_COLUMN_ACC_NAME);
+			//String condition = Constants.CDR_TABLE_COLUMN_ACC_NAME + " IN ( " + inClauseAccNames + " ) "; 
+			conditions.add(inClauseAccNames);
 		}
 		if(reqDetail.getBndName() != null && !reqDetail.getBndName().isEmpty()){
 			List<String> bndNames = CDRFieldUtils.getListFromString(reqDetail.getBndName());
-			String inClauseBndNames = CDRFieldUtils.getListAsString(bndNames);
-			String condition = Constants.CDR_TABLE_COLUMN_BND_NAME + " IN ( " + inClauseBndNames + " ) "; 
-			conditions.add(condition);
+			//String inClauseBndNames = CDRFieldUtils.getListAsString(bndNames);
+			String inClauseBndNames = CDRFieldUtils.getLikeClauseCondition(bndNames, Constants.CDR_TABLE_COLUMN_BND_NAME);
+			//String condition = Constants.CDR_TABLE_COLUMN_BND_NAME + " IN ( " + inClauseBndNames + " ) "; 
+			conditions.add(inClauseBndNames);
 		}
 		if(reqDetail.getANumbersString() != null && !reqDetail.getANumbersString().isEmpty()){
 			List<String> aNumbers = CDRFieldUtils.getListFromString(reqDetail.getANumbersString());
-			String inClauseANumbers = CDRFieldUtils.getListAsString(aNumbers);
-			String condition = Constants.CDR_TABLE_COLUMN_ANUMBER + " IN ( " + inClauseANumbers + " ) "; 
-			conditions.add(condition);
+			//String inClauseANumbers = CDRFieldUtils.getListAsString(aNumbers);
+			String inClauseANumbers = CDRFieldUtils.getLikeClauseCondition(aNumbers, Constants.CDR_TABLE_COLUMN_ANUMBER);
+			//String condition = Constants.CDR_TABLE_COLUMN_ANUMBER + " IN ( " + inClauseANumbers + " ) "; 
+			conditions.add(inClauseANumbers);
 		}
 		if(reqDetail.getBNumbersString() != null && !reqDetail.getBNumbersString().isEmpty()){
 			List<String> bNumbers = CDRFieldUtils.getListFromString(reqDetail.getBNumbersString());
-			String inClauseBNumbers = CDRFieldUtils.getListAsString(bNumbers);
-			String condition = Constants.CDR_TABLE_COLUMN_BNUMBER + " IN ( " + inClauseBNumbers + " ) "; 
-			conditions.add(condition);
+			//String inClauseBNumbers = CDRFieldUtils.getListAsString(bNumbers);
+			String inClauseBNumbers = CDRFieldUtils.getLikeClauseCondition(bNumbers, Constants.CDR_TABLE_COLUMN_BNUMBER);
+			//String condition = Constants.CDR_TABLE_COLUMN_BNUMBER + " IN ( " + inClauseBNumbers + " ) "; 
+			conditions.add(inClauseBNumbers);
 		}
 		if(reqDetail.getBillProfile() != null && !reqDetail.getBillProfile().isEmpty()){
 			List<String> billProfles = CDRFieldUtils.getListFromString(reqDetail.getBillProfile());
-			String inClauseBillProfles = CDRFieldUtils.getListAsString(billProfles);
-			String condition = Constants.CDR_TABLE_COLUMN_BILL_PROFILE + " IN ( " + inClauseBillProfles + " ) "; 
-			conditions.add(condition);
+			//String inClauseBillProfles = CDRFieldUtils.getListAsString(billProfles);
+			String inClauseBillProfles = CDRFieldUtils.getLikeClauseCondition(billProfles, Constants.CDR_TABLE_COLUMN_BILL_PROFILE );
+			//String condition = Constants.CDR_TABLE_COLUMN_BILL_PROFILE + " IN ( " + inClauseBillProfles + " ) "; 
+			conditions.add(inClauseBillProfles);
 		}
 		if(reqDetail.getCauseCode() != null && !reqDetail.getCauseCode().isEmpty()){
 			List<String> causeCodes = CDRFieldUtils.getListFromString(reqDetail.getCauseCode());
-			String inClauseCauseCodes = CDRFieldUtils.getListAsString(causeCodes);
-			String condition = Constants.CDR_TABLE_COLUMN_CAUSE_CODE + " IN ( " + inClauseCauseCodes + " ) "; 
-			conditions.add(condition);
+			//String inClauseCauseCodes = CDRFieldUtils.getListAsString(causeCodes);
+			String inClauseCauseCodes = CDRFieldUtils.getLikeClauseCondition(causeCodes, Constants.CDR_TABLE_COLUMN_CAUSE_CODE);
+			//String condition = Constants.CDR_TABLE_COLUMN_CAUSE_CODE + " IN ( " + inClauseCauseCodes + " ) "; 
+			conditions.add(inClauseCauseCodes);
 		}
 		if(!conditions.isEmpty()){
 			int size = conditions.size();

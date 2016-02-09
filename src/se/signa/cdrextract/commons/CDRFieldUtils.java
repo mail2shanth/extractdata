@@ -23,23 +23,45 @@ public class CDRFieldUtils {
     
     public static String getListAsString(List<String> list){
     	if(list != null && !list.isEmpty()){
-    		/*if(list.size() == 1){
-    			return list.get(0);
-    		}else{*/
-    			StringBuilder sb = new StringBuilder();
-    			int index = 0;
-    			int size = list.size();
-    			for(String bNum : list){
-    				sb.append("'");
-    				sb.append(bNum);
-    				sb.append("'");
-    				if(index< size-1){
-    					sb.append(",");
-    				}
-    				index++;
+    		StringBuilder sb = new StringBuilder();
+    		int index = 0;
+    		int size = list.size();
+    		for(String bNum : list){
+    			sb.append("'");
+    			sb.append(bNum);
+    			sb.append("'");
+    			if(index< size-1){
+    				sb.append(",");
     			}
-    			return sb.toString();
-    	//	}
+    			index++;
+    		}
+    		return sb.toString();
+    		//	}
+    	}else{
+    		return null;
+    	}
+    }
+    
+    public static String getLikeClauseCondition(List<String> list, String fieldName){
+    	if(list != null && !list.isEmpty()){
+    		StringBuilder sb = new StringBuilder();
+    		int index = 0;
+    		int size = list.size();
+    		sb.append(" ( ");
+    		for(String bNum : list){
+    			sb.append(fieldName);
+    			sb.append(" LIKE ");
+    			sb.append("'");
+    			sb.append(bNum);
+    			sb.append("'");
+    			if(index< size-1){
+    				//sb.append(",");
+    				sb.append(" OR ");
+    			}
+    			index++;
+    		}
+    		sb.append(" ) ");
+    		return sb.toString();
     	}else{
     		return null;
     	}
