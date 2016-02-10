@@ -360,15 +360,21 @@ public class CDRExtractorDetailForm extends javax.swing.JFrame {
             logger.error( "Date range is beyond limits.");
             jTextArea1.append("Failed to process request, check logs for more details.\n");
         }else{
-            JOptionPane.showMessageDialog(jPanel2, "Successfully processed request, check output directory for file(s).", null, 2, null);
-            jTextArea1.append("Successfully processed request, check output directory for file(s).  \n");
-            jTextArea1.append("Process endTime : " + Calendar.getInstance().getTimeInMillis() + "\n");
-            jTextArea1.append("OutputFile(s): \n");
-            for(String fName : response.getOutputFiles()){
-            	 jTextArea1.append(fName);
-            	 jTextArea1.append("\n");
-            }
-            clearFields();
+        	if(response.getOutputFiles() == null  || response.getOutputFiles().isEmpty()){
+        		 jTextArea1.append("No matching results found for query criteria. \n");
+                 jTextArea1.append("Process endTime : " + Calendar.getInstance().getTimeInMillis() + "\n");
+        	}else{
+        		JOptionPane.showMessageDialog(jPanel2, "Successfully processed request, check output directory for file(s).", null, 2, null);
+                jTextArea1.append("Successfully processed request, check output directory for file(s).  \n");
+                jTextArea1.append("Process endTime : " + Calendar.getInstance().getTimeInMillis() + "\n");
+                jTextArea1.append("Total CDRs found : " + response.getTotalRecords() + "\n");
+                jTextArea1.append("OutputFile(s) \n");
+                for(String fName : response.getOutputFiles()){
+                	 jTextArea1.append(fName);
+                	 jTextArea1.append("\n");
+                }
+        	}
+            //clearFields();
         }
         jButton1.setEnabled(true);
         jButton3.setEnabled(true);

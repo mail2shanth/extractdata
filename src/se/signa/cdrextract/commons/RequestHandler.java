@@ -94,10 +94,12 @@ public class RequestHandler {
 				logger.info("Fetching results for " + dateSuffix);
 				results = dh.fetchResults(reqDetail, connecton, dateSuffix);
 				logger.info("Writing to file for " + dateSuffix);
-				String outputFile = writeCDRs(results, dateSuffix, reqDetail.getRequestName());
+				String outputFile = writeCDRs(results, dateSuffix, reqDetail.getRequestName(), response);
 				logger.info("Saved results for " + dateSuffix);
-				opFiles.add(outputFile);
+				if(outputFile != null)
+					opFiles.add(outputFile);
 			}
+			logger.info("Processed " + response.getTotalRecords() + " CDRs.");
 			logger.info("Request completed in " + (System.currentTimeMillis() - startTime) + "mSecs.");
 			response.setStatus(1);
 			response.setOutputFiles(opFiles);
@@ -115,7 +117,7 @@ public class RequestHandler {
 		return response;
 	}
 
-	private String writeCDRs(ResultSet result, String dateSuffix, String reqName) throws Exception{
+	private String writeCDRs(ResultSet result, String dateSuffix, String reqName, Response response) throws Exception{
 		if(result == null){
 			logger.error("Not a valid resultSet...!");
 			return null;
@@ -135,8 +137,10 @@ public class RequestHandler {
 		if(sheetSizeValue > 65500)
 			sheetSizeValue = 65500;
 		int rowIndex = 0;
+		int totalCount = 0;
 		try {
 			while(result.next()){
+				totalCount++;
 				CallDetailRecord cdr = getCallDetailRecord(result);
 				if(rowIndex == sheetSizeValue){
 					rowIndex = 0;
@@ -150,6 +154,12 @@ public class RequestHandler {
 			}
 			if(rowIndex > 0 || sheetNumber > 1){
 				opFile = wtr.saveWorkbook(dateSuffix, reqName);
+			}
+			if(totalCount == 0){
+				logger.error("No matching results found for " + dateSuffix);
+			}else{
+				long totalSofar =  response.getTotalRecords() + totalCount;
+				response.setTotalRecords(totalSofar);
 			}
 		} catch (Exception e) {
 			logger.error(e);

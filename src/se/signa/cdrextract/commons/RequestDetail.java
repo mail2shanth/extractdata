@@ -112,8 +112,8 @@ public class RequestDetail {
     public boolean isEmptyRequest(){
     	if( this.accName != null && !this.accName.isEmpty() ||
     			this.bndName != null && !this.bndName.isEmpty() ||
-    			this.aNumbers != null && !this.aNumbers.isEmpty() ||
-    			this.bNumbers != null && !this.bNumbers.isEmpty() ||
+    			this.aNumbersString != null && !this.aNumbersString.isEmpty() ||
+    			this.bNumbersString != null && !this.bNumbersString.isEmpty() ||
     			//this.fromDate != null ||
     			//this.toDate != null ||
     			this.billProfile != null && !this.billProfile.isEmpty() ||

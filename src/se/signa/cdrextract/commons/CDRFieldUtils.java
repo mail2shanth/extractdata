@@ -48,12 +48,12 @@ public class CDRFieldUtils {
     		int index = 0;
     		int size = list.size();
     		sb.append(" ( ");
-    		for(String bNum : list){
+    		for(String value : list){
     			sb.append(fieldName);
     			sb.append(" LIKE ");
-    			sb.append("'");
-    			sb.append(bNum);
-    			sb.append("'");
+    			sb.append("'%");
+    			sb.append(value);
+    			sb.append("%'");
     			if(index< size-1){
     				//sb.append(",");
     				sb.append(" OR ");
