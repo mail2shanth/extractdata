@@ -60,6 +60,7 @@ public class DBHelper {
 	
 	private String getQuery(RequestDetail reqDetail, String dateSuffix){
 		String tableName = ApplicationProperties.getInstance().getPropertyValue(Constants.PROP_CDRTABLE_NAME);
+		// TODO write correct query.
 		StringBuilder query = new StringBuilder("select * from " + tableName + "_" + dateSuffix) ;
 		List<String> conditions = new LinkedList<String>();
 		if(!reqDetail.isEmptyRequest()){
